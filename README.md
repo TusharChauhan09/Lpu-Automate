@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# LPU Wi-Fi Auto Connect Extension
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Chrome Extension designed to automate the login process for Lovely Professional University (LPU) Wi-Fi. It securely saves your credentials and automatically logs you in whenever the captive portal page is detected, saving you time and hassle.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   **Auto-Login**: Instantly fills username/password, checks "I Agree", and submits the form on `10.10.0.1` or `internet.lpu.in`.
+-   **Instant Reaction**: Uses `MutationObserver` to detect the login form the moment it appears in the DOM.
+-   **Secure Storage**: Saves credentials locally using `chrome.storage.local`.
+-   **Global Dark Mode**: Includes a toggle to apply a dark mode filter to **all websites** you visit.
+-   **Modern UI**: Clean, icon-based interface built with React and Tailwind CSS.
+-   **Toggle Switch**: Easily enable or disable the auto-connect feature.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+-   **React**: UI Framework.
+-   **Vite**: Build tool.
+-   **CRXJS**: Vite plugin for Chrome Extension development.
+-   **Tailwind CSS**: Styling.
+-   **Tabler Icons**: Iconography.
+-   **TypeScript**: Type safety.
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1.  **Build the Project**:
+    Ensure you have Node.js installed, then run:
+    ```bash
+    npm install
+    npm run build
+    ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2.  **Load in Chrome**:
+    - Open Chrome and navigate to `chrome://extensions`.
+    - Enable **Developer mode** (toggle in the top right).
+    - Click **Load unpacked**.
+    - Select the `dist` folder located in your project directory.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Usage
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1.  **Setup Credentials**:
+    - Click the extension icon in your browser toolbar.
+    - Enter your **Registration Number** (User Icon) and **Password** (Lock Icon).
+    - Click the **Update** button (Floppy Disk Icon).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2.  **Auto-Connect**:
+    - Connect to the LPU Wi-Fi network.
+    - When the login page opens, the extension will automatically log you in.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3.  **Global Dark Mode**:
+    - Click the **Moon/Sun** icon in the extension popup to toggle dark mode for all websites.
+    - **Note**: If a site looks broken, you can quickly toggle this off.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4.  **Disable Extension**:
+    - Click the **Power** button (Green = On, Red = Off) to temporarily disable auto-login.
+
+## Troubleshooting
+
+-   **Extension Disabled?**: If Chrome disables the extension due to permission changes (e.g., adding Global Dark Mode), go to `chrome://extensions` and re-enable it.
+-   **Not Working?**: Ensure you are on the correct login URL (`10.10.0.1`).

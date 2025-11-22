@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Automatically logs in to LPU Wi-Fi.",
   "permissions": ["storage"],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "index.html"
   },
@@ -11,6 +12,10 @@
     {
       "matches": ["*://10.10.0.1/*", "*://internet.lpu.in/*"],
       "js": ["src/content/index.ts"]
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/theme.ts"]
     }
   ]
 }

@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
+import { IconUser, IconLock, IconPower, IconMoon, IconSun, IconDeviceFloppy } from '@tabler/icons-react';
 
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isEnabled, setIsEnabled] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [status, setStatus] = useState('');
 
   useEffect(() => {
-    // Load saved credentials and toggle state
-    chrome.storage.local.get(['lpu_username', 'lpu_password', 'lpu_auto_connect_enabled'], (result: { lpu_username?: string; lpu_password?: string; lpu_auto_connect_enabled?: boolean }) => {
+    // Load saved credentials and settings
+    chrome.storage.local.get(['lpu_username', 'lpu_password', 'lpu_auto_connect_enabled', 'lpu_global_dark_mode'], (result: { lpu_username?: string; lpu_password?: string; lpu_auto_connect_enabled?: boolean; lpu_global_dark_mode?: boolean }) => {
       if (result.lpu_username) setUsername(result.lpu_username);
       if (result.lpu_password) setPassword(result.lpu_password);
       if (result.lpu_auto_connect_enabled !== undefined) setIsEnabled(result.lpu_auto_connect_enabled);
+      if (result.lpu_global_dark_mode !== undefined) setIsDarkMode(result.lpu_global_dark_mode);
     });
   }, []);
 
@@ -20,10 +23,11 @@ function App() {
       { 
         lpu_username: username, 
         lpu_password: password,
-        lpu_auto_connect_enabled: isEnabled
+        lpu_auto_connect_enabled: isEnabled,
+        lpu_global_dark_mode: isDarkMode
       },
       () => {
-        setStatus('Settings updated!');
+        setStatus('Updated!');
         setTimeout(() => setStatus(''), 2000);
       }
     );
@@ -32,67 +36,90 @@ function App() {
   const toggleExtension = () => {
       const newState = !isEnabled;
       setIsEnabled(newState);
-      // Auto-save toggle state immediately for better UX
       chrome.storage.local.set({ lpu_auto_connect_enabled: newState });
   };
 
+  const toggleDarkMode = () => {
+      const newState = !isDarkMode;
+      setIsDarkMode(newState);
+      chrome.storage.local.set({ lpu_global_dark_mode: newState });
+  };
+
   return (
-    <div className="w-80 p-6 bg-white rounded-lg shadow-md">
+    <div className={`w-96 p-4 transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}>
       <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl font-bold text-orange-600">
-            LPU Auto Connect
-          </h1>
+          <div className="flex items-center space-x-2">
+             {/* Dark Mode Toggle */}
+            <button 
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
+                title="Toggle Global Dark Mode"
+            >
+                {isDarkMode ? <IconMoon size={20} /> : <IconSun size={20} />}
+            </button>
+          </div>
+          
+          {/* Enable Toggle */}
           <button 
             onClick={toggleExtension}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${isEnabled ? 'bg-green-500' : 'bg-gray-200'}`}
+            className={`p-2 rounded-full transition-colors ${isEnabled ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-600 hover:bg-red-200'}`}
+            title={isEnabled ? "Extension Enabled" : "Extension Disabled"}
           >
-            <span className="sr-only">Enable Auto Connect</span>
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isEnabled ? 'translate-x-6' : 'translate-x-1'}`}
-            />
+            <IconPower size={20} />
           </button>
       </div>
 
-      <div className={`space-y-4 ${!isEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Username (Reg No / UID)
-          </label>
+      <div className={`space-y-4 transition-opacity duration-300 ${!isEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <IconUser size={18} className={isDarkMode ? 'text-gray-400' : 'text-gray-500'} />
+          </div>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Enter your Reg No"
+            className={`block w-full pl-10 pr-3 py-2 rounded-md border transition-all duration-200 outline-none
+                ${isDarkMode 
+                    ? 'bg-gray-800 border-gray-700 focus:border-orange-500 text-white placeholder-gray-500' 
+                    : 'bg-gray-50 border-gray-300 focus:border-orange-500 text-gray-900 placeholder-gray-400'
+                }
+            `}
+            placeholder="Reg No / UID"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <IconLock size={18} className={isDarkMode ? 'text-gray-400' : 'text-gray-500'} />
+          </div>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Enter your password"
+            className={`block w-full pl-10 pr-3 py-2 rounded-md border transition-all duration-200 outline-none
+                ${isDarkMode 
+                    ? 'bg-gray-800 border-gray-700 focus:border-orange-500 text-white placeholder-gray-500' 
+                    : 'bg-gray-50 border-gray-300 focus:border-orange-500 text-gray-900 placeholder-gray-400'
+                }
+            `}
+            placeholder="Password"
           />
         </div>
         <button
           onClick={handleSave}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 cursor-pointer"
+          className="w-full py-2 px-4 rounded-md font-medium text-white bg-orange-600 hover:bg-orange-700 transition-colors flex justify-center items-center space-x-2"
         >
-          Update Credentials
+          <IconDeviceFloppy size={18} />
+          <span>Update</span>
         </button>
       </div>
        {status && (
-          <p className="mt-4 text-center text-sm text-green-600 font-medium">
+          <div className="mt-4 p-2 rounded bg-green-100 text-green-700 text-center text-sm font-medium animate-pulse">
             {status}
-          </p>
+          </div>
         )}
         {!isEnabled && (
-            <p className="mt-4 text-center text-sm text-gray-500 italic">
-                Extension is currently disabled.
+            <p className={`mt-4 text-center text-xs italic ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                Extension is disabled.
             </p>
         )}
     </div>
