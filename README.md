@@ -1,4 +1,4 @@
-# LPU Wi-Fi Auto Connect Extension
+# LPU Automate Extension
 
 A Chrome Extension designed to automate the login process for Lovely Professional University (LPU) Wi-Fi. It securely saves your credentials and automatically logs you in whenever the captive portal page is detected, saving you time and hassle.
 
