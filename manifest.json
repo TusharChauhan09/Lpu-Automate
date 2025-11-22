@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "LPU Wi-Fi Auto Connect",
+  "version": "1.0.0",
+  "description": "Automatically logs in to LPU Wi-Fi.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://10.10.0.1/*", "*://internet.lpu.in/*"],
+      "js": ["src/content/index.ts"]
+    }
+  ]
+}
